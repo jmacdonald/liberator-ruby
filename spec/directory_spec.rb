@@ -89,4 +89,29 @@ describe Liberator::Directory do
       end
     end
   end
+
+  describe 'select_previous_entry method' do
+    it 'exists' do
+      @directory.respond_to?(:select_previous_entry).should be_true
+    end
+
+    context 'first entry is selected' do
+      it 'does not change the selected entry' do
+        previous_selection = @directory.selected_entry
+        @directory.select_previous_entry
+        @directory.selected_entry.should equal(previous_selection)
+      end
+    end
+
+    context 'last entry is selected' do
+      before :each do
+        @directory.instance_eval { @selected_index = @entries.size-1 }
+      end
+
+      it 'selects the second last entry' do
+        @directory.select_previous_entry
+        @directory.selected_entry.should equal(@directory.entries[@directory.entries.size-2])
+      end
+    end
+  end
 end

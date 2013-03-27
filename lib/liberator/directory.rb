@@ -26,5 +26,9 @@ module Liberator
     def selected_entry
       @entries[@selected_index]
     end
+
+    def select_next_entry
+      @selected_index += 1 unless @selected_index >= @entries.size-1
+    end
   end
 end

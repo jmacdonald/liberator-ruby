@@ -52,4 +52,16 @@ describe Liberator::Directory do
       end
     end
   end
+
+  describe 'selected_entry method' do
+    it 'exists' do
+      @directory.respond_to?(:selected_entry).should be_true
+    end
+
+    describe 'return value' do
+      it 'defaults to the first entry' do
+        @directory.selected_entry.should equal(@directory.entries.first)
+      end
+    end
+  end
 end

@@ -20,6 +20,11 @@ module Liberator
         { path: absolute_path, size: size }
       end
       @entries.compact!
+      @selected_index = 0
+    end
+
+    def selected_entry
+      @entries[@selected_index]
     end
   end
 end

@@ -34,5 +34,9 @@ module Liberator
     def select_next_entry
       @selected_index += 1 unless @selected_index >= @entries.size-1
     end
+
+    def parent
+      Directory.new File.expand_path(@path + '/..')
+    end
   end
 end

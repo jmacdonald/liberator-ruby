@@ -55,7 +55,7 @@ describe Liberator::Directory do
 
   describe 'selected_entry method' do
     it 'exists' do
-      @directory.respond_to?(:selected_entry).should be_true
+      @directory.should respond_to(:selected_entry)
     end
 
     describe 'return value' do
@@ -67,7 +67,7 @@ describe Liberator::Directory do
 
   describe 'select_next_entry method' do
     it 'exists' do
-      @directory.respond_to?(:select_next_entry).should be_true
+      @directory.should respond_to(:select_next_entry)
     end
 
     context 'first entry is selected' do
@@ -92,7 +92,7 @@ describe Liberator::Directory do
 
   describe 'select_previous_entry method' do
     it 'exists' do
-      @directory.respond_to?(:select_previous_entry).should be_true
+      @directory.should respond_to(:select_previous_entry)
     end
 
     context 'first entry is selected' do
@@ -111,6 +111,22 @@ describe Liberator::Directory do
       it 'selects the second last entry' do
         @directory.select_previous_entry
         @directory.selected_entry.should equal(@directory.entries[@directory.entries.size-2])
+      end
+    end
+  end
+
+  describe 'parent method' do
+    it 'exists' do
+      @directory.should respond_to(:parent)
+    end
+
+    describe 'return value' do
+      it 'is a directory' do
+        @directory.parent.should be_a(Liberator::Directory)
+      end
+
+      it 'points to the parent directory' do
+        @directory.parent.path.should == File.expand_path('..')
       end
     end
   end

@@ -4,8 +4,8 @@ module Liberator
     def initialize(path)
       @path = File.expand_path path
       @entries = Dir.entries(@path).collect do |entry|
-        # Skip meta-directories.
-        next if entry == '.' || entry == '..'
+        # Skip meta-directories and symlinks.
+        next if entry == '.' || entry == '..' || File.symlink?(entry)
 
         absolute_path = @path + '/' + entry
 
@@ -19,7 +19,7 @@ module Liberator
 
         { path: absolute_path, size: size }
       end
-      @entries.compact!
+      @entries = @entries.compact.sort_by { |entry| 1.0/entry[:size].to_f }
       @selected_index = 0
     end
 

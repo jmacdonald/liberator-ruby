@@ -12,6 +12,10 @@ describe Liberator::Directory do
   end
 
   describe 'entries attribute' do
+    after :all do
+      File.unlink 'symlink'
+    end
+
     it 'is an array' do
       @directory.entries.should be_an(Array)
     end
@@ -22,8 +26,22 @@ describe Liberator::Directory do
       end
     end
 
+    it 'does not include symlinks' do
+      File.symlink 'lib', 'symlink'
+
+      Liberator::Directory.new('.').entries.each do |entry|
+        File.symlink?(entry[:path]).should_not be_true
+      end
+    end
+
     it 'contains Hash objects' do
       @directory.entries.first.should be_a(Hash)
+    end
+
+    it 'is reverse sorted by size' do
+      (0..@directory.entries.size-2).each do |index|
+        @directory.entries[index][:size].should be >= @directory.entries[index+1][:size]
+      end
     end
 
     describe 'entry hash' do

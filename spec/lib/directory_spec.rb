@@ -12,10 +12,6 @@ describe Liberator::Directory do
   end
 
   describe 'entries attribute' do
-    after :all do
-      File.unlink 'spec/symlink'
-    end
-
     it 'is an array' do
       @directory.entries.should be_an(Array)
     end
@@ -23,14 +19,6 @@ describe Liberator::Directory do
     it 'does not contain nil values' do
       @directory.entries.each do |entry|
         entry.should_not be_nil
-      end
-    end
-
-    it 'does not include symlinks' do
-      File.symlink 'lib', 'spec/symlink'
-
-      Liberator::Directory.new('spec').entries.each do |entry|
-        File.symlink?(entry[:path]).should_not be_true
       end
     end
 

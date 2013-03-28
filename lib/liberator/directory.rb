@@ -4,10 +4,10 @@ module Liberator
     def initialize(path)
       @path = File.expand_path path
       @entries = Dir.entries(@path).collect do |entry|
-        # Skip meta-directories and symlinks.
-        next if entry == '.' || entry == '..' || File.symlink?(entry)
-
         absolute_path = @path + '/' + entry
+
+        # Skip meta-directories and symlinks.
+        next if entry == '.' || entry == '..' || File.symlink?(absolute_path)
 
         if File.file? absolute_path
           size = File.size absolute_path

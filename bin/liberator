@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+require_relative '../lib/liberator'
+
+controller = Liberator::Controller.new(Liberator::View.new)
+controller.listen

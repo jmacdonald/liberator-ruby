@@ -1,7 +1,8 @@
 class Dir
   def self.real_entries(path)
     Dir.entries(path).select do |entry|
-      !File.symlink?(entry) && entry != '.' && entry != '..'
+      absolute_path = path + '/' + entry
+      !File.symlink?(absolute_path) && entry != '.' && entry != '..'
     end
   end
 

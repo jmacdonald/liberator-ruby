@@ -1,6 +1,43 @@
 require 'spec_helper'
 
 describe Dir do
+  describe 'real_entries' do
+    before :each do
+      File.symlink 'lib', 'symlink'
+
+      @entries = Dir.real_entries Dir.pwd
+    end
+
+    after :each do
+      File.unlink 'symlink'
+    end
+
+    it 'returns an array' do
+      @entries.should be_an Array
+    end
+
+    describe 'returned object' do
+      it 'contains strings' do
+        @entries.each do |entry|
+          entry.should be_a String
+        end
+      end
+
+      it 'does not include the current directory' do
+        @entries.should_not include '.'
+      end
+
+      it 'does not include the parent directory' do
+        @entries.should_not include '..'
+      end
+
+      it 'does not include symlink paths' do
+        @entries.each do |entry|
+          File.symlink?(entry).should_not be_true
+        end
+      end
+    end
+  end
   describe 'size method' do
     before :each do
       @directory_size = Dir.size '.'

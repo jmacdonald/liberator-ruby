@@ -1,4 +1,10 @@
 class Dir
+  def self.real_entries(path)
+    Dir.entries(path).select do |entry|
+      !File.symlink?(entry) && entry != '.' && entry != '..'
+    end
+  end
+
   def self.size(path)
     size = 0
     full_path = File.expand_path(path) + '/'

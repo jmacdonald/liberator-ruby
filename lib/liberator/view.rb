@@ -10,16 +10,21 @@ module Liberator
       Curses.noecho
       Curses.curs_set 0
       Curses.cbreak
-      @window = Curses.stdscr
+      @height = Curses.stdscr.maxy
+      @width = Curses.stdscr.maxx
+
+      @entry_window = Curses::Window.new @height-1, @width, 0, 0
+
+      @status_bar = Curses::Window.new 1, @width, @height-1, 0
+      @status_bar.standout
     end
 
-    def display_entries(entries, selected_entry)
-      @window.clear
-      @window.refresh
+    def refresh(directory, entries, selected_entry)
+      @entry_window.clear
 
       entries.each do |entry|
         # Turn on highlighting, if this entry is selected.
-        @window.standout if entry == selected_entry
+        @entry_window.standout if entry == selected_entry
 
         # Print the formatted size.
         size = entry[:size]
@@ -38,18 +43,28 @@ module Liberator
         name += '/' if File.directory? entry[:path]
 
         # Right-justify the file/directory size.
-        formatted_size = formatted_size.rjust @window.maxx - name.length
-        @window << name + formatted_size
+        formatted_size = formatted_size.rjust @entry_window.maxx - name.length
+        @entry_window << name + formatted_size
 
         # Stop highlighting.
-        @window.standend
+        @entry_window.standend
       end
 
-      #@window.refresh
+      update_status_bar directory
+
+      @entry_window.refresh
+    end
+
+    def update_status_bar(directory)
+      @status_bar.setpos 0, 0
+      formatted_directory = directory.ljust @width
+      @status_bar << formatted_directory
+
+      @status_bar.refresh
     end
 
     def capture_keystroke
-      @window.getch
+      @entry_window.getch
     end
 
     def close

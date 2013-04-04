@@ -35,5 +35,9 @@ module Liberator
     def parent
       Directory.new File.expand_path(@path + '/..')
     end
+
+    def delete_selected_entry
+      FileUtils.rm_rf selected_entry[:path]
+    end
   end
 end

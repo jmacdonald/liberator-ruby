@@ -56,9 +56,12 @@ module Liberator
     end
 
     def update_status_bar(directory)
+    def update_status_bar(content)
       @status_bar.setpos 0, 0
       formatted_directory = directory.ljust @width
       @status_bar << formatted_directory
+      formatted_content = content.ljust @width
+      @status_bar << formatted_content
 
       @status_bar.refresh
     end

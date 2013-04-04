@@ -22,10 +22,13 @@ module Liberator
     end
 
     def refresh(directory, entries, selected_index)
-      @entry_window.clear
-
-      # Figure out what to draw based on the selected entry and height of the screen.
       height = @entry_window.maxy
+
+      # Clear the screen manually, since clear function causes blinking.
+      @entry_window.setpos 0, 0
+      height.times { @entry_window.deleteln }
+
+      # Figure out what to draw based on the selected entry and height of the window.
       if selected_index < height-1
         visible_range = (0...height)
       elsif selected_index == entries.size-1 # last item selected
@@ -50,8 +53,6 @@ module Liberator
       end
 
       update_status_bar directory
-
-      @entry_window.refresh
     end
 
     def update_status_bar(content)

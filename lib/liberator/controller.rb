@@ -35,7 +35,7 @@ module Liberator
     end
 
     def render
-      @view.refresh(@directory.path, @directory.entries, @directory.selected_entry) unless @view.nil?
+      @view.refresh(@directory.path, @directory.entries, @directory.selected_index) unless @view.nil?
     end
   end
 end

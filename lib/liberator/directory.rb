@@ -1,6 +1,6 @@
 module Liberator
   class Directory
-    attr_reader :path, :entries
+    attr_reader :path, :entries, :selected_index
     def initialize(path)
       @path = File.expand_path path
       @entries = Dir.real_entries(@path).collect do |entry|

@@ -21,12 +21,22 @@ module Liberator
       @scroll_offset = 0
     end
 
-    def refresh(directory, entries, selected_entry)
+    def refresh(directory, entries, selected_index)
       @entry_window.clear
 
-      entries[@scroll_offset..@entry_window.maxy+@scroll_offset-1].each do |entry|
+      # Figure out what to draw based on the selected entry and height of the screen.
+      height = @entry_window.maxy
+      if selected_index < height
+        visible_range = (0...height)
+      elsif selected_index == entries.size
+        visible_range = (entries.size-height+1..entries.size)
+      else
+        visible_range = (selected_index-height+20..selected_index+1)
+      end
+
+      entries[visible_range].each_with_index do |entry, index|
         # Turn on highlighting, if this entry is selected.
-        @entry_window.standout if entry == selected_entry
+        @entry_window.standout if index == selected_index
 
         # Get the file/directory name, without its full path.
         name = entry[:path][entry[:path].rindex('/')+1..-1]

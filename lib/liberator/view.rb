@@ -28,25 +28,12 @@ module Liberator
         # Turn on highlighting, if this entry is selected.
         @entry_window.standout if entry == selected_entry
 
-        # Print the formatted size.
-        size = entry[:size]
-        if size > GIGABYTE
-          formatted_size = "#{size / GIGABYTE} GB"
-        elsif size > MEGABYTE
-          formatted_size = "#{size / MEGABYTE} MB"
-        elsif size > KILOBYTE
-          formatted_size = "#{size / KILOBYTE} KB"
-        else
-          formatted_size = "#{size} bytes"
-        end
-
         # Get the file/directory name, without its full path.
         name = entry[:path][entry[:path].rindex('/')+1..-1]
         name += '/' if File.directory? entry[:path]
 
-        # Right-justify the file/directory size.
-        formatted_size = formatted_size.rjust @entry_window.maxx - name.length
-        @entry_window << name + formatted_size
+        # Add the row to the window, appending a right-justified human-readable size.
+        @entry_window << name + formatted_size(entry[:size]).rjust(@entry_window.maxx - name.length)
 
         # Stop highlighting.
         @entry_window.standend
@@ -63,6 +50,18 @@ module Liberator
       @status_bar << formatted_content
 
       @status_bar.refresh
+    end
+
+    def formatted_size(size)
+      if size > GIGABYTE
+        "#{size / GIGABYTE} GB"
+      elsif size > MEGABYTE
+        "#{size / MEGABYTE} MB"
+      elsif size > KILOBYTE
+        "#{size / KILOBYTE} KB"
+      else
+        "#{size} bytes"
+      end
     end
 
     def capture_keystroke

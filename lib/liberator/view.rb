@@ -17,12 +17,14 @@ module Liberator
 
       @status_bar = Curses::Window.new 1, @width, @height-1, 0
       @status_bar.standout
+
+      @scroll_offset = 0
     end
 
     def refresh(directory, entries, selected_entry)
       @entry_window.clear
 
-      entries.each do |entry|
+      entries[@scroll_offset..@entry_window.maxy+@scroll_offset-1].each do |entry|
         # Turn on highlighting, if this entry is selected.
         @entry_window.standout if entry == selected_entry
 
@@ -55,11 +57,8 @@ module Liberator
       @entry_window.refresh
     end
 
-    def update_status_bar(directory)
     def update_status_bar(content)
       @status_bar.setpos 0, 0
-      formatted_directory = directory.ljust @width
-      @status_bar << formatted_directory
       formatted_content = content.ljust @width
       @status_bar << formatted_content
 

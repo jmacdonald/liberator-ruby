@@ -196,6 +196,12 @@ describe Liberator::Directory do
       @directory.entries.size.should_not == initial_entry_count
       File.unlink 'test_file'
     end
+
+    it 'resets the selected_index to 0' do
+      @directory.select_next_entry
+      @directory.refresh
+      @directory.selected_index.should == 0
+    end
   end
 
   describe 'cache_entries method' do

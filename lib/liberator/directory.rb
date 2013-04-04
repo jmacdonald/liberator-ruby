@@ -3,7 +3,6 @@ module Liberator
     attr_reader :path, :entries, :selected_index
     def initialize(path)
       @path = File.expand_path path
-      @selected_index = 0
       cache_entries
     end
 
@@ -42,6 +41,7 @@ module Liberator
         { path: absolute_path, size: size }
       end
       @entries = @entries.compact.sort_by { |entry| 1.0/entry[:size].to_f }
+      @selected_index = 0
     end
     alias_method :cache_entries, :refresh
   end

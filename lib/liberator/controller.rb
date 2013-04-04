@@ -32,7 +32,8 @@ module Liberator
         @directory = @directory.parent
         render
       when 'x'
-        @view.confirm_delete
+        @directory.delete_selected_entry if @view.confirm_delete
+        @directory.refresh
         render
       end
     end

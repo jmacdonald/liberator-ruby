@@ -79,6 +79,11 @@ module Liberator
       @entry_window.getch
     end
 
+    def confirm_delete
+      update_status_bar "Really delete? (y to confirm)"
+      capture_keystroke == 'y'
+    end
+
     def close
       # Clean up curses view.
       Curses.close_screen

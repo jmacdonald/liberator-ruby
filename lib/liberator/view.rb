@@ -26,17 +26,17 @@ module Liberator
 
       # Figure out what to draw based on the selected entry and height of the screen.
       height = @entry_window.maxy
-      if selected_index < height
+      if selected_index < height-1
         visible_range = (0...height)
-      elsif selected_index == entries.size
-        visible_range = (entries.size-height+1..entries.size)
+      elsif selected_index == entries.size-1 # last item selected
+        visible_range = (entries.size-height..entries.size)
       else
-        visible_range = (selected_index-height+20..selected_index+1)
+        visible_range = (selected_index-height+2..selected_index+1)
       end
 
       entries[visible_range].each_with_index do |entry, index|
         # Turn on highlighting, if this entry is selected.
-        @entry_window.standout if index == selected_index
+        @entry_window.standout if index+visible_range.begin == selected_index
 
         # Get the file/directory name, without its full path.
         name = entry[:path][entry[:path].rindex('/')+1..-1]

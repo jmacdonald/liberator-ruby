@@ -183,4 +183,28 @@ describe Liberator::Directory do
       end
     end
   end
+
+  describe 'refresh method' do
+    it 'exists' do
+      @directory.should respond_to(:refresh)
+    end
+
+    it 'updates cached entries' do
+      initial_entry_count = @directory.entries.size
+      FileUtils.touch 'test_file'
+      @directory.refresh
+      @directory.entries.size.should_not == initial_entry_count
+      File.unlink 'test_file'
+    end
+  end
+
+  describe 'cache_entries method' do
+    it 'exists' do
+      @directory.should respond_to(:cache_entries)
+    end
+
+    it 'is an alias of the refresh method' do
+      @directory.method(:cache_entries).should == @directory.method(:refresh)
+    end
+  end
 end

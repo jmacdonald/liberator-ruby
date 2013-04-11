@@ -74,23 +74,11 @@ describe Dir do
     end
 
     it 'calculates the correct size' do
-      calculate_directory_size = lambda do |path|
-        size = 0
-        full_path = File.expand_path(path) + '/'
-        Dir.entries(full_path).each do |entry|
-          # Skip meta-directories.
-          next if entry == '.' || entry == '..'
+      `du -ks "."`.split("\t").first.to_i.should == @directory_size
+    end
 
-          if File.file? full_path + entry
-            size += File.size(full_path + entry)
-          elsif File.directory? full_path + entry
-            size += calculate_directory_size.call(full_path + entry)
-          end
-        end
-        size
-      end
-
-      @directory_size.should == calculate_directory_size.call('.')
+    it 'returns nil when illegal values are passed to it' do
+      Dir.size('echo "test"').should be_nil
     end
   end
 end

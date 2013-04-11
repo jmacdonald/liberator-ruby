@@ -7,15 +7,6 @@ class Dir
   end
 
   def self.size(path)
-    size = 0
-    full_path = File.expand_path(path) + '/'
-    Dir.real_entries(full_path).each do |entry|
-      if File.file? full_path + entry
-        size += File.size full_path + entry
-      elsif File.directory? full_path + entry
-        size += Dir.size full_path + entry
-      end
-    end
-    size
+    `du -ks "#{path}"`.split("\t").first.to_i if Dir.exists? path
   end
 end

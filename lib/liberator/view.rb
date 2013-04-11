@@ -1,8 +1,7 @@
 module Liberator
   class View
-    GIGABYTE = 1073741824
-    MEGABYTE = 1048576
-    KILOBYTE = 1024
+    GIGABYTE = 1048576
+    MEGABYTE = 1024
 
     def initialize
       # Initialize curses view.
@@ -22,21 +21,24 @@ module Liberator
     end
 
     def refresh(directory, entries, selected_index)
-      @entry_window.clear
-
-      # Figure out what to draw based on the selected entry and height of the screen.
       height = @entry_window.maxy
-      if selected_index < height
+
+      # Clear the screen manually, since clear function causes blinking.
+      @entry_window.setpos 0, 0
+      height.times { @entry_window.deleteln }
+
+      # Figure out what to draw based on the selected entry and height of the window.
+      if selected_index < height-1
         visible_range = (0...height)
-      elsif selected_index == entries.size
-        visible_range = (entries.size-height+1..entries.size)
+      elsif selected_index == entries.size-1 # last item selected
+        visible_range = (entries.size-height..entries.size)
       else
-        visible_range = (selected_index-height+20..selected_index+1)
+        visible_range = (selected_index-height+2..selected_index+1)
       end
 
       entries[visible_range].each_with_index do |entry, index|
         # Turn on highlighting, if this entry is selected.
-        @entry_window.standout if index == selected_index
+        @entry_window.standout if index+visible_range.begin == selected_index
 
         # Get the file/directory name, without its full path.
         name = entry[:path][entry[:path].rindex('/')+1..-1]
@@ -50,8 +52,6 @@ module Liberator
       end
 
       update_status_bar directory
-
-      @entry_window.refresh
     end
 
     def update_status_bar(content)
@@ -67,15 +67,18 @@ module Liberator
         "#{size / GIGABYTE} GB"
       elsif size > MEGABYTE
         "#{size / MEGABYTE} MB"
-      elsif size > KILOBYTE
-        "#{size / KILOBYTE} KB"
       else
-        "#{size} bytes"
+        "#{size} KB"
       end
     end
 
     def capture_keystroke
       @entry_window.getch
+    end
+
+    def confirm_delete
+      update_status_bar "Really delete? (y to confirm)"
+      capture_keystroke == 'y'
     end
 
     def close

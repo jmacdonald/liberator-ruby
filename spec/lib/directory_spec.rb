@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'fileutils'
 
 describe Liberator::Directory do
   before :each do
@@ -134,6 +135,82 @@ describe Liberator::Directory do
       it 'points to the parent directory' do
         @directory.parent.path.should == File.expand_path('..')
       end
+    end
+  end
+
+  describe 'delete_selected_entry' do
+    it 'exists' do
+      @directory.should respond_to(:delete_selected_entry)
+    end
+
+    context 'a file is selected' do
+      it 'deletes the selected file' do
+        FileUtils.touch 'test_file'
+        file_path = File.expand_path('./test_file')
+        directory = Liberator::Directory.new '.'
+        directory.select_next_entry until directory.selected_entry[:path] == file_path
+        directory.delete_selected_entry
+        File.exists?(file_path).should be_false
+      end
+    end
+
+    context 'a directory is selected' do
+      before :each do
+        FileUtils.rm_rf 'test_dir' if Dir.exists? 'test_dir'
+      end
+
+      context 'with no files' do
+        it 'deletes the directory' do
+          Dir.mkdir 'test_dir'
+          dir_path = File.expand_path('./test_dir')
+          directory = Liberator::Directory.new '.'
+          directory.select_next_entry until directory.selected_entry[:path] == dir_path
+          directory.delete_selected_entry
+          Dir.exists?(dir_path).should be_false
+        end
+      end
+
+      context 'with a file' do
+        it 'deletes the directory' do
+          Dir.mkdir 'test_dir'
+          FileUtils.touch 'test_dir/test_file'
+          dir_path = File.expand_path('./test_dir')
+          directory = Liberator::Directory.new '.'
+          directory.select_next_entry until directory.selected_entry[:path] == dir_path
+          directory.delete_selected_entry
+          Dir.exists?(dir_path).should be_false
+        end
+      end
+    end
+  end
+
+  describe 'refresh method' do
+    it 'exists' do
+      @directory.should respond_to(:refresh)
+    end
+
+    it 'updates cached entries' do
+      initial_entry_count = @directory.entries.size
+      FileUtils.touch 'test_file'
+      @directory.refresh
+      @directory.entries.size.should_not == initial_entry_count
+      File.unlink 'test_file'
+    end
+
+    it 'resets the selected_index to 0' do
+      @directory.select_next_entry
+      @directory.refresh
+      @directory.selected_index.should == 0
+    end
+  end
+
+  describe 'cache_entries method' do
+    it 'exists' do
+      @directory.should respond_to(:cache_entries)
+    end
+
+    it 'is an alias of the refresh method' do
+      @directory.method(:cache_entries).should == @directory.method(:refresh)
     end
   end
 end

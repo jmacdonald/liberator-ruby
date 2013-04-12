@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Liberator::Controller do
   before :each do
-    @controller = Liberator::Controller.new
+    @view = double 'view', update_status_bar: true, refresh: true
+    @controller = Liberator::Controller.new @view
   end
 
   describe 'key_pressed method' do

@@ -1,15 +1,15 @@
 module Liberator
   class Controller
-    def initialize(view=nil)
+    def initialize(view)
       @view = view
-      @view.update_status_bar "Analyzing #{Dir.pwd}..." unless @view.nil?
+      @view.update_status_bar "Analyzing #{Dir.pwd}..."
       @directory = Directory.new Dir.pwd
       render
     end
 
     def listen
       loop do
-        handle_key @view.capture_keystroke unless @view.nil?
+        handle_key @view.capture_keystroke
       end
     end
 
@@ -26,12 +26,12 @@ module Liberator
         render
       when 10
         if File.directory? @directory.selected_entry[:path]
-          @view.update_status_bar "Analyzing #{@directory.selected_entry[:path]}..." unless @view.nil?
+          @view.update_status_bar "Analyzing #{@directory.selected_entry[:path]}..."
           @directory = Directory.new @directory.selected_entry[:path]
           render
         end
       when 'h'
-        @view.update_status_bar "Analyzing #{File.expand_path(@directory.path + '/..')}..." unless @view.nil?
+        @view.update_status_bar "Analyzing #{File.expand_path(@directory.path + '/..')}..."
         @directory = @directory.parent
         render
       when 'x'
@@ -42,7 +42,7 @@ module Liberator
     end
 
     def render
-      @view.refresh(@directory.path, @directory.entries, @directory.selected_index) unless @view.nil?
+      @view.refresh(@directory.path, @directory.entries, @directory.selected_index)
     end
   end
 end

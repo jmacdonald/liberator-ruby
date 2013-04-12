@@ -2,6 +2,7 @@ module Liberator
   class Controller
     def initialize(view=nil)
       @view = view
+      @view.update_status_bar "Analyzing #{Dir.pwd}..." unless @view.nil?
       @directory = Directory.new Dir.pwd
       render
     end
@@ -25,10 +26,12 @@ module Liberator
         render
       when 10
         if File.directory? @directory.selected_entry[:path]
+          @view.update_status_bar "Analyzing #{@directory.selected_entry[:path]}..." unless @view.nil?
           @directory = Directory.new @directory.selected_entry[:path]
           render
         end
       when 'h'
+        @view.update_status_bar "Analyzing #{File.expand_path(@directory.path + '/..')}..." unless @view.nil?
         @directory = @directory.parent
         render
       when 'x'

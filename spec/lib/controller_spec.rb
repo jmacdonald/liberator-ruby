@@ -6,6 +6,18 @@ describe Liberator::Controller do
     @controller = Liberator::Controller.new @view
   end
 
+  describe 'constructor' do
+    it 'displays a loading screen' do
+      @view.should_receive :update_status_bar
+      controller = Liberator::Controller.new @view
+    end
+
+    it 'refreshes the view' do
+      @view.should_receive :refresh
+      controller = Liberator::Controller.new @view
+    end
+  end
+
   describe 'key_pressed method' do
     context 'j key' do
       it 'selects the next entry' do

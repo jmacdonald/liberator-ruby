@@ -99,6 +99,11 @@ describe Liberator::Controller do
           new_directory = @controller.instance_eval { @directory }
           new_directory.path.should == parent_directory.path
         end
+
+        it 'refreshes the view' do
+          @view.should_receive :refresh
+          @controller.handle_key 'h'
+        end
       end
     end
   end

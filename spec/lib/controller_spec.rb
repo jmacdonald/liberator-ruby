@@ -7,23 +7,37 @@ describe Liberator::Controller do
   end
 
   describe 'key_pressed method' do
-    it 'selects the next entry when passed the "j" key' do
-      expected_value = @controller.instance_eval { @directory.entries[1] }
-      @controller.handle_key 'j'
-      selected_value = @controller.instance_eval { @directory.selected_entry }
-      selected_value.should equal(expected_value)
+    context 'j key' do
+      it 'selects the next entry' do
+        expected_value = @controller.instance_eval { @directory.entries[1] }
+        @controller.handle_key 'j'
+        selected_value = @controller.instance_eval { @directory.selected_entry }
+        selected_value.should equal(expected_value)
+      end
+
+      it 'refreshes the view' do
+        @view.should_receive :refresh
+        @controller.handle_key 'j'
+      end
     end
 
-    it 'selects the previous entry when passed the "k" key' do
-      # Select the next entry, so we can actually move to a previous value.
-      @controller.instance_eval { @directory.select_next_entry }
-      expected_value = @controller.instance_eval { @directory.entries[0] }
-      @controller.handle_key 'k'
-      selected_value = @controller.instance_eval { @directory.selected_entry }
-      selected_value.should equal(expected_value)
+    context 'k key' do
+      it 'selects the previous entry' do
+        # Select the next entry, so we can actually move to a previous value.
+        @controller.instance_eval { @directory.select_next_entry }
+        expected_value = @controller.instance_eval { @directory.entries[0] }
+        @controller.handle_key 'k'
+        selected_value = @controller.instance_eval { @directory.selected_entry }
+        selected_value.should equal(expected_value)
+      end
+
+      it 'refreshes the view' do
+        @view.should_receive :refresh
+        @controller.handle_key 'k'
+      end
     end
 
-    describe 'enter key' do
+    context 'enter key' do
       context 'a directory is selected' do
         before :each do
           # Select a directory.
@@ -39,6 +53,16 @@ describe Liberator::Controller do
           @controller.handle_key 10
           selected_directory = @controller.instance_eval { @directory }
           selected_directory.path.should == @selected_entry[:path]
+        end
+
+        it 'displays a loading screen' do
+          @view.should_receive :update_status_bar
+          @controller.handle_key 10
+        end
+
+        it 'refreshes the view' do
+          @view.should_receive :refresh
+          @controller.handle_key 10
         end
       end
 
@@ -59,6 +83,11 @@ describe Liberator::Controller do
           selected_directory = @controller.instance_eval { @directory }
           selected_directory.should equal old_directory
         end
+
+        it 'does not refresh the view' do
+          @view.should_not_receive :refresh
+          @controller.handle_key 10
+        end
       end
     end
 
@@ -71,6 +100,6 @@ describe Liberator::Controller do
           new_directory.path.should == parent_directory.path
         end
       end
-     end
+    end
   end
 end

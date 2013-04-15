@@ -1,7 +1,8 @@
 module Liberator
   class View
-    GIGABYTE = 1048576
-    MEGABYTE = 1024
+    GIGABYTE = 1073741824
+    MEGABYTE = 1048576
+    KILOBYTE = 1024
 
     def initialize
       # Initialize curses view.
@@ -67,8 +68,10 @@ module Liberator
         "#{size / GIGABYTE} GB"
       elsif size > MEGABYTE
         "#{size / MEGABYTE} MB"
+      elsif size > KILOBYTE
+        "#{size / KILOBYTE} KB"
       else
-        "#{size} KB"
+        "#{size} bytes"
       end
     end
 

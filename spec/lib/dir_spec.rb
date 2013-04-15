@@ -74,7 +74,7 @@ describe Dir do
     end
 
     it 'calculates the correct size' do
-      `du -ks "."`.split("\t").first.to_i.should == @directory_size
+      (`du -ks "."`.split("\t").first.to_i*1024).should == @directory_size
     end
 
     it 'returns nil when illegal values are passed to it' do

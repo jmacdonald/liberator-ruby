@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'liberator'
-  s.version     = '0.1.2'
+  s.version     = '0.1.3'
   s.date        = '2013-04-11'
   s.summary     = 'Disk space management tool.'
   s.description = 'Liberator helps you find and delete files and directories consuming large amounts of space. It uses a curses interface and is ideally suited for *nix servers running without a GUI.'

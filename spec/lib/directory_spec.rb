@@ -6,6 +6,22 @@ describe Liberator::Directory do
     @directory = Liberator::Directory.new '.'
   end
 
+  describe 'constructor' do
+    context 'with an unreadable directory' do
+      before :all do
+        FileUtils.mkdir 'unreadable', mode: 000
+      end
+
+      after :all do
+        FileUtils.rmdir 'unreadable'
+      end
+
+      it 'raises an IOError exception' do
+        expect { @directory = Liberator::Directory.new 'unreadable' }.to raise_error(IOError)
+      end
+    end
+  end
+
   describe 'path attribute' do
     it "is the absolute equivalent of the constructor's path argument" do
       @directory.path.should == File.expand_path('.')

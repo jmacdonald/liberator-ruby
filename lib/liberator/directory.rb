@@ -27,21 +27,25 @@ module Liberator
     end
 
     def refresh
-      @entries = Dir.real_entries(@path).collect do |entry|
-        absolute_path = @path + '/' + entry
+      begin
+        @entries = Dir.real_entries(@path).collect do |entry|
+          absolute_path = @path + '/' + entry
 
-        if File.file? absolute_path
-          size = File.size absolute_path
-        elsif File.directory? absolute_path
-          size = Dir.size absolute_path
-        else
-          next
+          if File.file? absolute_path
+            size = File.size absolute_path
+          elsif File.directory? absolute_path
+            size = Dir.size absolute_path
+          else
+            next
+          end
+
+          { path: absolute_path, size: size }
         end
-
-        { path: absolute_path, size: size }
+        @entries = @entries.compact.sort_by { |entry| 1.0/entry[:size].to_f }
+        @selected_index = 0
+      rescue
+        raise IOError.new
       end
-      @entries = @entries.compact.sort_by { |entry| 1.0/entry[:size].to_f }
-      @selected_index = 0
     end
     alias_method :cache_entries, :refresh
   end

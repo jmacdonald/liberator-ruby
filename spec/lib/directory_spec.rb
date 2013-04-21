@@ -20,6 +20,24 @@ describe Liberator::Directory do
         expect { @directory = Liberator::Directory.new 'unreadable' }.to raise_error(IOError)
       end
     end
+
+    context 'with an unreadable entry' do
+      before :all do
+        FileUtils.mkdir 'unreadable', mode: 000
+      end
+
+      after :all do
+        FileUtils.rmdir 'unreadable'
+      end
+
+      it 'does not raise an exception' do
+        expect { @directory = Liberator::Directory.new Dir.pwd }.to_not raise_error
+      end
+
+      it 'is not nil' do
+        Liberator::Directory.new(Dir.pwd).should_not be_nil
+      end
+    end
   end
 
   describe 'path attribute' do

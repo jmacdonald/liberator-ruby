@@ -64,6 +64,8 @@ module Liberator
     end
 
     def formatted_size(size)
+      return '-' if size.nil?
+
       if size > GIGABYTE
         "#{size / GIGABYTE} GB"
       elsif size > MEGABYTE

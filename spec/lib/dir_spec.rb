@@ -80,5 +80,19 @@ describe Dir do
     it 'returns nil when illegal values are passed to it' do
       Dir.size('echo "test"').should be_nil
     end
+
+    context 'when passed an unreadable directory' do
+      before :each do
+        FileUtils.mkdir 'unreadable', mode: 000
+      end
+
+      after :each do
+        FileUtils.rmdir 'unreadable'
+      end
+
+      it 'returns nil' do
+        Dir.size('unreadable').should be_nil
+      end
+    end
   end
 end

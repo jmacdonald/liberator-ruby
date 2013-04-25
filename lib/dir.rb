@@ -7,6 +7,9 @@ class Dir
   end
 
   def self.size(path)
-    `du -ks "#{path}"`.split("\t").first.to_i*1024 if Dir.exists? path
+    if Dir.exists? path
+      size = `du -ks "#{path}" 2> /dev/null`
+      size.split("\t").first.to_i*1024 if size != ''
+    end
   end
 end

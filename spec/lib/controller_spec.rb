@@ -101,6 +101,42 @@ describe Liberator::Controller do
           @controller.handle_key 10
         end
       end
+
+      context 'an unreadable directory is selected' do
+        before :each do
+          # Create the directory and refresh the cache entries so it appears.
+          FileUtils.mkdir 'unreadable', mode: 000
+          @controller.instance_eval { @directory.refresh }
+
+          # Select the unreadable directory.
+          @selected_entry = @controller.instance_eval { @directory.selected_entry }
+          until @selected_entry[:path] == File.expand_path('./unreadable')
+            @controller.instance_eval { @directory.select_next_entry }
+            @selected_entry = @controller.instance_eval { @directory.selected_entry }
+          end
+        end
+
+        after :each do
+          FileUtils.rmdir 'unreadable'
+        end
+
+        it 'does not throw an IOError exception' do
+          expect { @controller.handle_key 10 }.to_not raise_error(IOError)
+        end
+
+        it 'does not change directories' do
+          # Trigger the key and expect the directory to remain.
+          old_directory = @controller.instance_eval { @directory }
+          @controller.handle_key 10
+          selected_directory = @controller.instance_eval { @directory }
+          selected_directory.should equal old_directory
+        end
+
+        it 'displays a message regarding permissions' do
+          @view.should_receive(:update_status_bar).with 'Cannot change directories due to permissions'
+          @controller.handle_key 10
+        end
+      end
     end
 
     describe 'h key' do

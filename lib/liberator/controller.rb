@@ -27,7 +27,11 @@ module Liberator
       when 10
         if File.directory? @directory.selected_entry[:path]
           @view.update_status_bar "Analyzing #{@directory.selected_entry[:path]}..."
-          @directory = Directory.new @directory.selected_entry[:path]
+          begin
+            @directory = Directory.new @directory.selected_entry[:path]
+          rescue IOError
+            @view.update_status_bar "Cannot change directories due to permissions"
+          end
           render
         end
       when 'h'

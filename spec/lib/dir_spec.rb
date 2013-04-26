@@ -83,15 +83,26 @@ describe Dir do
 
     context 'when passed an unreadable directory' do
       before :each do
-        FileUtils.mkdir 'unreadable', mode: 000
+        # Create nested unreadable structure, as some filesystems
+        # will return a size for directories if their parent is readable.
+        FileUtils.mkdir 'unreadable'
+        FileUtils.mkdir 'unreadable/unreadable', mode: 0000
+        FileUtils.chmod 0000, 'unreadable'
       end
 
       after :each do
+        FileUtils.chmod 0700, 'unreadable'
+        FileUtils.chmod 0700, 'unreadable/unreadable'
+        FileUtils.rmdir 'unreadable/unreadable'
         FileUtils.rmdir 'unreadable'
       end
 
+      it 'does not throw an exception' do
+        expect { Dir.size 'unreadable/unreadable' }.to_not raise_error
+      end
+
       it 'returns nil' do
-        Dir.size('unreadable').should be_nil
+        Dir.size('unreadable/unreadable').should be_nil
       end
     end
   end

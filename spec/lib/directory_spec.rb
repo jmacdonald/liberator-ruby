@@ -173,18 +173,56 @@ describe Liberator::Directory do
   end
 
   describe 'delete_selected_entry' do
+    before :each do
+      FileUtils.mkdir 'test_directory'
+      FileUtils.touch 'test_directory/test_file'
+      @directory = Liberator::Directory.new 'test_directory'
+      @file_path = File.expand_path 'test_directory/test_file'
+    end
+
+    after :each do
+      FileUtils.rm 'test_directory/test_file' if File.exists? 'test_directory/test_file'
+      FileUtils.rmdir 'test_directory' if File.directory? 'test_directory'
+    end
+
     it 'exists' do
       @directory.should respond_to(:delete_selected_entry)
     end
 
     context 'a file is selected' do
-      it 'deletes the selected file' do
-        FileUtils.touch 'test_file'
-        file_path = File.expand_path('./test_file')
-        directory = Liberator::Directory.new '.'
-        directory.select_next_entry until directory.selected_entry[:path] == file_path
-        directory.delete_selected_entry
-        File.exists?(file_path).should be_false
+      before :each do
+        @directory.select_next_entry until @directory.selected_entry[:path] == @file_path
+      end
+
+      context 'user has the permissions to delete the file' do
+        it 'deletes the selected file' do
+          @directory.delete_selected_entry
+          File.exists?(@file_path).should be_false
+        end
+      end
+
+      context 'user does not have the permissions to delete the file' do
+        before :each do
+          FileUtils.chmod 0000, 'test_directory'
+        end
+
+        after :each do
+          FileUtils.chmod 0700, 'test_directory'
+        end
+
+        it 'does not throw an exception' do
+          expect { @directory.delete_selected_entry }.to_not raise_error
+        end
+
+        it 'returns false' do
+          @directory.delete_selected_entry.should be_false
+        end
+
+        it 'does not delete the selected file' do
+          @directory.delete_selected_entry
+          FileUtils.chmod 0700, 'test_directory'
+          File.exists?(@file_path).should be_true
+        end
       end
     end
 

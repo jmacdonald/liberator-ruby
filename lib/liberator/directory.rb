@@ -23,7 +23,13 @@ module Liberator
     end
 
     def delete_selected_entry
-      FileUtils.rm_rf selected_entry[:path]
+      begin
+        FileUtils.rm_r selected_entry[:path]
+      rescue Errno::EACCES
+        return false
+      end
+      
+      true
     end
 
     def refresh

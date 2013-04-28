@@ -208,7 +208,7 @@ describe Liberator::Directory do
 
       context 'user does not have the permissions to delete the file' do
         before :each do
-          FileUtils.chmod 0000, 'test_directory'
+          FileUtils.chmod 0500, 'test_directory'
         end
 
         after :each do
@@ -225,7 +225,6 @@ describe Liberator::Directory do
 
         it 'does not delete the selected file' do
           @directory.delete_selected_entry
-          FileUtils.chmod 0700, 'test_directory'
           File.exists?(@file_path).should be_true
         end
       end
@@ -250,14 +249,51 @@ describe Liberator::Directory do
             Dir.exists?(@directory_path).should be_false
           end
         end
+
+        context 'user does not have the permissions to delete the directory' do
+          before :each do
+            FileUtils.chmod 0500, 'test_directory'
+          end
+
+          after :each do
+            FileUtils.chmod 0700, 'test_directory'
+          end
+
+          it 'does not delete the directory' do
+            @directory.delete_selected_entry
+            Dir.exists?(@directory_path).should be_true
+          end
+        end
       end
 
       context 'with a file' do
+        before :each do
+          FileUtils.touch 'test_directory/test_directory/test_file'
+        end
+
+        after :each do
+          FileUtils.rm 'test_directory/test_directory/test_file' if File.exists? 'test_directory/test_directory/test_file'
+        end
+        
         context 'user has the permissions to delete the directory' do
           it 'deletes the directory' do
-            FileUtils.touch 'test_directory/test_directory/test_file'
             @directory.delete_selected_entry
             Dir.exists?(@directory_path).should be_false
+          end
+        end
+
+        context 'user does not have the permissions to delete the directory' do
+          before :each do
+            FileUtils.chmod 0500, 'test_directory'
+          end
+
+          after :each do
+            FileUtils.chmod 0700, 'test_directory'
+          end
+
+          it 'does not delete the directory' do
+            @directory.delete_selected_entry
+            Dir.exists?(@directory_path).should be_true
           end
         end
       end

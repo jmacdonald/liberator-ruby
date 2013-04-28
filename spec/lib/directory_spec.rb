@@ -175,9 +175,7 @@ describe Liberator::Directory do
   describe 'delete_selected_entry' do
     before :each do
       FileUtils.mkdir 'test_directory'
-      FileUtils.touch 'test_directory/test_file'
       @directory = Liberator::Directory.new 'test_directory'
-      @file_path = File.expand_path 'test_directory/test_file'
     end
 
     after :each do
@@ -191,7 +189,14 @@ describe Liberator::Directory do
 
     context 'a file is selected' do
       before :each do
+        FileUtils.touch 'test_directory/test_file'
+        @file_path = File.expand_path 'test_directory/test_file'
+        @directory.refresh # Need to refresh to see the test_file
         @directory.select_next_entry until @directory.selected_entry[:path] == @file_path
+      end
+
+      after :each do
+        FileUtils.rm 'test_directory/test_file' if File.exists? 'test_directory/test_file'
       end
 
       context 'user has the permissions to delete the file' do
@@ -228,29 +233,32 @@ describe Liberator::Directory do
 
     context 'a directory is selected' do
       before :each do
-        FileUtils.rm_rf 'test_dir' if Dir.exists? 'test_dir'
+        FileUtils.mkdir 'test_directory/test_directory'
+        @directory_path = File.expand_path 'test_directory/test_directory'
+        @directory.refresh # Need to refresh to see the test_file
+        @directory.select_next_entry until @directory.selected_entry[:path] == @directory_path
+      end
+
+      after :each do
+        FileUtils.rmdir 'test_directory/test_directory' if File.directory? 'test_directory/test_directory'
       end
 
       context 'with no files' do
-        it 'deletes the directory' do
-          Dir.mkdir 'test_dir'
-          dir_path = File.expand_path('./test_dir')
-          directory = Liberator::Directory.new '.'
-          directory.select_next_entry until directory.selected_entry[:path] == dir_path
-          directory.delete_selected_entry
-          Dir.exists?(dir_path).should be_false
+        context 'user has the permissions to delete the directory' do
+          it 'deletes the directory' do
+            @directory.delete_selected_entry
+            Dir.exists?(@directory_path).should be_false
+          end
         end
       end
 
       context 'with a file' do
-        it 'deletes the directory' do
-          Dir.mkdir 'test_dir'
-          FileUtils.touch 'test_dir/test_file'
-          dir_path = File.expand_path('./test_dir')
-          directory = Liberator::Directory.new '.'
-          directory.select_next_entry until directory.selected_entry[:path] == dir_path
-          directory.delete_selected_entry
-          Dir.exists?(dir_path).should be_false
+        context 'user has the permissions to delete the directory' do
+          it 'deletes the directory' do
+            FileUtils.touch 'test_directory/test_directory/test_file'
+            @directory.delete_selected_entry
+            Dir.exists?(@directory_path).should be_false
+          end
         end
       end
     end

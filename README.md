@@ -51,4 +51,4 @@ If you don't have permission to write a directory, you won't be able to delete i
 ## License
 Copyright &copy; 2013 Jordan MacDonald.
 
-Distributed under the GPLv3 License. See LICENSE.txt for further details.
+Distributed under the GPLv3 License. See LICENSE for further details.

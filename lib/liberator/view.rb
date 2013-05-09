@@ -22,8 +22,6 @@ module Liberator
     end
 
     def refresh(directory, entries, selected_index)
-      height = @entry_window.maxy
-
       # Clear the screen manually, since clear function causes blinking.
       @entry_window.setpos 0, 0
       height.times { @entry_window.deleteln }
@@ -89,6 +87,10 @@ module Liberator
     def close
       # Clean up curses view.
       Curses.close_screen
+    end
+
+    def height
+      @entry_window.maxy
     end
   end
 end

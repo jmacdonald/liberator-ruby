@@ -36,18 +36,11 @@ module Liberator
       end
 
       entries[visible_range].each_with_index do |entry, index|
-        # Turn on highlighting, if this entry is selected.
-        @entry_window.standout if index+visible_range.begin == selected_index
-
         # Get the file/directory name, without its full path.
         name = entry[:path][entry[:path].rindex('/')+1..-1]
         name += '/' if File.directory? entry[:path]
 
-        # Add the row to the window, appending a right-justified human-readable size.
-        @entry_window << name + formatted_size(entry[:size]).rjust(@entry_window.maxx - name.length)
-
-        # Stop highlighting.
-        @entry_window.standend
+        draw_line name, formatted_size(entry[:size]), index+visible_range.begin == selected_index
       end
 
       update_status_bar directory
@@ -91,6 +84,17 @@ module Liberator
 
     def height
       @entry_window.maxy
+    end
+
+    private
+
+    def draw_line(left_content='', right_content='', highlight=false)
+      @entry_window.standout if highlight
+
+      line_content = left_content + right_content.rjust(@entry_window.maxx - left_content.length)
+      @entry_window << line_content
+
+      @entry_window.standend
     end
   end
 end

@@ -22,9 +22,7 @@ module Liberator
     end
 
     def refresh(directory, entries, selected_index)
-      # Clear the screen manually, since clear function causes blinking.
-      @entry_window.setpos 0, 0
-      height.times { @entry_window.deleteln }
+      clear_screen
 
       # Figure out what to draw based on the selected entry and height of the window.
       if selected_index < height-1
@@ -95,6 +93,12 @@ module Liberator
       @entry_window << line_content
 
       @entry_window.standend
+    end
+
+    def clear_screen
+      # Clear the screen manually, since curses clear function causes blinking.
+      @entry_window.setpos 0, 0
+      height.times { @entry_window.deleteln }
     end
   end
 end

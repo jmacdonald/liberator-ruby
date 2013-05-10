@@ -34,7 +34,11 @@ Navigation cues are taken from Vi. Here's a quick rundown:
 
 `<enter>` Enter the selected directory
 
+### Other Commands
+
 `x` Delete the current selection
+
+`q` Exit the application
 
 ### Permissions
 

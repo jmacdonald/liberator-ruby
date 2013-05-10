@@ -25,15 +25,7 @@ module Liberator
         @directory.select_previous_entry
         render
       when 10
-        if File.directory? @directory.selected_entry[:path]
-          @view.update_status_bar "Analyzing #{@directory.selected_entry[:path]}..."
-          begin
-            @directory = Directory.new @directory.selected_entry[:path]
-          rescue IOError
-            @view.update_status_bar "Cannot change directories due to permissions"
-          end
-          render
-        end
+        enter_selected_directory
       when 'h'
         @view.update_status_bar "Analyzing #{File.expand_path(@directory.path + '/..')}..."
         @directory = @directory.parent
@@ -47,6 +39,18 @@ module Liberator
 
     def render
       @view.refresh(@directory.path, @directory.entries, @directory.selected_index)
+    end
+
+    def enter_selected_directory
+      if File.directory? @directory.selected_entry[:path]
+        @view.update_status_bar "Analyzing #{@directory.selected_entry[:path]}..."
+        begin
+          @directory = Directory.new @directory.selected_entry[:path]
+        rescue IOError
+          @view.update_status_bar "Cannot change directories due to permissions"
+        end
+        render
+      end
     end
   end
 end

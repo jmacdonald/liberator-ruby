@@ -34,11 +34,7 @@ module Liberator
       end
 
       entries[visible_range].each_with_index do |entry, index|
-        # Get the file/directory name, without its full path.
-        name = entry[:path][entry[:path].rindex('/')+1..-1]
-        name += '/' if File.directory? entry[:path]
-
-        draw_line name, formatted_size(entry[:size]), index+visible_range.begin == selected_index
+        draw_line entry_name(entry[:path]), formatted_size(entry[:size]), index+visible_range.begin == selected_index
       end
 
       update_status_bar directory
@@ -99,6 +95,12 @@ module Liberator
       # Clear the screen manually, since curses clear function causes blinking.
       @entry_window.setpos 0, 0
       height.times { @entry_window.deleteln }
+    end
+
+    def entry_name(path)
+      name = path[path.rindex('/')+1..-1]
+      name += '/' if File.directory? path
+      name
     end
   end
 end

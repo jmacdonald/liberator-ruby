@@ -1,4 +1,4 @@
-# Liberator [![Build Status](https://travis-ci.org/jmacdonald/liberator.png)](https://travis-ci.org/jmacdonald/liberator) [![Code Climate](https://codeclimate.com/github/jmacdonald/liberator.png)](https://codeclimate.com/github/jmacdonald/liberator)
+# Liberator [![Build Status](https://travis-ci.org/jmacdonald/liberator.png)](https://travis-ci.org/jmacdonald/liberator) [![Code Climate](https://codeclimate.com/github/jmacdonald/liberator.png)](https://codeclimate.com/github/jmacdonald/liberator) [![Coverage Status](https://coveralls.io/repos/jmacdonald/liberator/badge.png?branch=master)](https://coveralls.io/r/jmacdonald/liberator?branch=master)
 
 Running out of space on your Linux/BSD server?
 

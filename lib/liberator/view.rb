@@ -1,8 +1,6 @@
 module Liberator
   class View
-    GIGABYTE = 1073741824
-    MEGABYTE = 1048576
-    KILOBYTE = 1024
+    include Liberator::ViewHelper
 
     def initialize
       # Initialize curses view.
@@ -38,20 +36,6 @@ module Liberator
       @status_bar << formatted_content
 
       @status_bar.refresh
-    end
-
-    def formatted_size(size)
-      return '-' if size.nil?
-
-      if size > GIGABYTE
-        "#{size / GIGABYTE} GB"
-      elsif size > MEGABYTE
-        "#{size / MEGABYTE} MB"
-      elsif size > KILOBYTE
-        "#{size / KILOBYTE} KB"
-      else
-        "#{size} bytes"
-      end
     end
 
     def capture_keystroke

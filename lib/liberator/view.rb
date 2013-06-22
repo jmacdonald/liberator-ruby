@@ -73,12 +73,6 @@ module Liberator
       height.times { @entry_window.deleteln }
     end
 
-    def entry_name(path)
-      name = path[path.rindex('/')+1..-1]
-      name += '/' if File.directory? path
-      name
-    end
-
     def calculate_visible_range(entries, selected_index)
       if selected_index < height-1
         (0...height)

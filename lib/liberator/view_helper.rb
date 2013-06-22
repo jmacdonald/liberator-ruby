@@ -17,5 +17,11 @@ module Liberator
         "#{size} bytes"
       end
     end
+
+    def entry_name(path)
+      name = path[path.rindex('/')+1..-1]
+      name += '/' if File.directory? path
+      name
+    end
   end
 end

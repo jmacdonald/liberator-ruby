@@ -34,4 +34,18 @@ describe ViewHelperClass do
       end
     end
   end
+
+  describe 'entry_name method' do
+    context 'when passed a file path' do
+      it 'returns the file name' do
+        @view_helper.entry_name('/usr/local/bin/liberator').should == 'liberator'
+      end
+    end
+
+    context 'when passed a directory' do
+      it 'returns the directory name with a trailing slash' do
+        @view_helper.entry_name('/var').should == 'var/'
+      end
+    end
+  end
 end

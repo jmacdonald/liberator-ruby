@@ -7,11 +7,11 @@ module Liberator
     def formatted_size(size)
       return '-' if size.nil?
 
-      if size > GIGABYTE
+      if size >= GIGABYTE
         "#{size / GIGABYTE} GB"
-      elsif size > MEGABYTE
+      elsif size >= MEGABYTE
         "#{size / MEGABYTE} MB"
-      elsif size > KILOBYTE
+      elsif size >= KILOBYTE
         "#{size / KILOBYTE} KB"
       else
         "#{size} bytes"
